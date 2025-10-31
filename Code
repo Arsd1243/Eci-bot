@@ -1,0 +1,73 @@
+import discord
+from discord.ext import commands
+import random
+
+# Token del bot (reemplázalo por el tuyo)
+TOKEN = '#####'
+
+# Intenciones necesarias
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+# --- Datos del bot ---
+TIPS = [
+    "Usa bolsas reutilizables en lugar de plásticas.",
+    "Compra productos locales sin tanto empaque.",
+    "Separa residuos: papel, vidrio, plástico y metal.",
+    "Haz compost con los restos de comida.",
+    "Evita botellas desechables, usa termo o cantimplora.",
+]
+
+RESIDUOS = {
+    "botella": "Reciclable (plástico PET). Tarda unos 450 años en descomponerse.",
+    "cáscara": "Orgánico. Ideal para compostar, se degrada en semanas.",
+    "lata": "Reciclable (aluminio). Se degrada en unos 200 años.",
+    "vidrio": "Reciclable infinitamente. No se degrada de forma natural.",
+    "papel": "Reciclable. Se degrada en unos 2 a 5 meses.",
+}
+
+# --- Eventos y comandos ---
+@bot.event
+async def on_ready():
+    print(f" Bot conectado como {bot.user}")
+
+@bot.command()
+async def ayuda(ctx):
+    """Muestra la lista de comandos disponibles"""
+    ayuda_texto = (
+        "** EcoBot — Guía ecológica básica**\n\n"
+        "Comandos disponibles:\n"
+        "`!tip` → Muestra un consejo ecológico aleatorio.\n"
+        "`!clasificar <objeto>` → Te dice si el objeto se recicla o no.\n"
+        "`!info` → Explica qué tipo de información ofrece el bot.\n"
+        "`!ayuda` → Muestra esta lista de comandos."
+    )
+    await ctx.send(ayuda_texto)
+
+@bot.command()
+async def info(ctx):
+    """Explica la función del bot"""
+    await ctx.send(
+        "**Soy EcoBot**, tu asistente ambiental. Te doy consejos, información "
+        "y datos útiles para reducir la contaminación y los residuos en casa."
+    )
+
+@bot.command()
+async def tip(ctx):
+    """Muestra un consejo ecológico aleatorio"""
+    consejo = random.choice(TIPS)
+    await ctx.send(f" {consejo}")
+
+@bot.command()
+async def clasificar(ctx, objeto: str):
+    """Informa sobre reciclaje y tiempo de descomposición"""
+    objeto = objeto.lower()
+    if objeto in RESIDUOS:
+        await ctx.send(f"♻️ {RESIDUOS[objeto]}")
+    else:
+        await ctx.send(
+            "No tengo información sobre ese objeto. Prueba con: botella, cáscara, lata, vidrio o papel."
+        )
+
+# --- Ejecutar el bot ---
+bot.run(TOKEN)
